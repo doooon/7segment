@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta name="format-detection" content="telephone=no">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>7 Segment Exchange</title>
+  <style type="text/css">
+  <!--
+  * { font-family: monospace; }
+  -->
+  </style>
+	
+	<script type="text/javascript" charset="utf-8">
+	
+// バイナリをLED7セグ変換(hex)
+function func7segDec(bin) {
+  bin=bin.replace(/(^\s+|\s+$)/g, "");
+  if (!bin.match(/^([01]{7}\s*)+$/)) return null;
+  var map=[
+  ["1111110", "0"], 
+  ["0110000", "1"], 
+  ["1101101", "2"], 
+  ["1111001", "3"], 
+  ["0110011", "4"], 
+  ["1011011", "5"], 
+  ["1011111", "6"], 
+  ["1110000", "7"], 
+  ["1111111", "8"], 
+  ["1111011", "9"],
+  ["1110111", "a"], 
+  ["0011111", "b"], 
+  ["1001110", "c"], 
+  ["0111101", "d"], 
+  ["1001111", "e"], 
+  ["1000111", "f"]
+  ];
+  var binL=[];
+  if (bin.match(/\s/)) {
+    binL=bin.split(/\s+/g);
+  } else {
+    binL=bin.match(/[01]{7}/g);
+  }
+  var result=[];
+  for (var i in binL) {
+    var flag=1; //matchしたら0
+    for (var j in map) {
+      if (map[j][0]==binL[i]) {
+        result[i]=[binL[i], map[j][1]];
+        flag=0;
+        break;
+      }
+    }
+    if (flag) result[i]=[binL[i], "?"];
+  }
+  // [ binary, Hex ] のリストを返す
+  return result;
+}
+
+
+// -------------------------------------------------------
+function main(str) {
+  var result=[];
+  var result1=[];
+  var result2=[];
+  var targetElm=document.getElementById('resultString');
+	var tmp=func7segDec(str);
+	
+  for (var j in tmp) {
+    if (tmp[j][0]) {
+      result.push(tmp[j][0]+": "+tmp[j][1]);
+      result1.push(tmp[j][0]);
+      result2.push(tmp[j][1]);
+    }
+  }
+  
+  var tmp=[];
+  tmp.push(result.join("\n"));
+  tmp.push("\n");
+  tmp.push("*** Result ***");
+  tmp.push(result2.join(" "));
+  tmp.push("\n");
+  tmp.push("*** Join ***");
+  tmp.push(result2.join(""));
+  tmp.push("\n");
+  tmp.push("*** Comma-Separated ***");
+  tmp.push(result1.join(","));
+  tmp.push(result2.join(","));
+  tmp.push("\n");
+  tmp.push("*** Tab-Separated ***");
+  tmp.push(result1.join("\t"));
+  tmp.push(result2.join("\t"));
+  
+  targetElm.value=tmp.join("\n");
+}
+
+  
+	</script>
+</head>
+<body>
+	<h1>7 Segment Exchange</h1>
+	<div>
+	  <h3>enter Binary numeral</h3>
+	  <input type="text" id="inputBin" value="" style="width: 90%" onchange="main(this.value)" onautofocus>
+	  <input type="button" value="exchange" onClick="main(document.getElementById('inputBin').value)"><br>
+    <span style="font-sze: 50%"> </span>
+
+	</div>
+	<div>
+    <h3>result strings</h3>
+    <textarea id="resultString" style="width: 90%" rows=30 style="font-family: monospace; font-size: 100%" readonly></textarea><br>
+    <span style="font-size: 70%">
+    </span>
+	</div>
+</body>
+</html>
